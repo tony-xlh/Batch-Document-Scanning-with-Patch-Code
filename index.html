@@ -59,9 +59,10 @@
         Dynamsoft.DWT.Containers = [{ ContainerId: 'dwtcontrolContainer',Width: 270, Height: 350 }];
         Dynamsoft.DWT.RegisterEvent('OnWebTwainReady', function () {
           console.log("ready");
-          status.innerText = "";
           DWObject = Dynamsoft.DWT.GetWebTwain('dwtcontrolContainer');
           DWObject.SetViewMode(2,2);
+          usePatchCodeRuntimeSettings();
+          status.innerText = "";
         });
         status.innerText = "Loading...";
         Dynamsoft.DWT.Load();
@@ -81,43 +82,73 @@
       }
 
       function loadFile() {
-        function OnSuccess() {
-          console.log('successful');
+        if (DWObject) {
+          function OnSuccess() {
+            console.log('successful');
+          }
+          function OnFailure(errorCode, errorString) {
+            alert(errorString);
+          }
+          DWObject.IfShowFileDialog = true;
+          // PDF Rasterizer Addon is used here to ensure PDF support
+          DWObject.Addon.PDF.SetResolution(200);
+          DWObject.Addon.PDF.SetConvertMode(Dynamsoft.DWT.EnumDWT_ConvertMode.CM_RENDERALL);
+          DWObject.LoadImageEx("", Dynamsoft.DWT.EnumDWT_ImageType.IT_ALL, OnSuccess, OnFailure);
         }
-
-        function OnFailure(errorCode, errorString) {
-          alert(errorString);
-        }
-        DWObject.IfShowFileDialog = true;
-        // PDF Rasterizer Addon is used here to ensure PDF support
-        DWObject.Addon.PDF.SetResolution(200);
-        DWObject.Addon.PDF.SetConvertMode(Dynamsoft.DWT.EnumDWT_ConvertMode.CM_RENDERALL);
-        DWObject.LoadImageEx("", Dynamsoft.DWT.EnumDWT_ImageType.IT_ALL, OnSuccess, OnFailure);
       }
 
-      function save(){
+      async function save(){
+        await tagImagesWithBarcodeReader();
+      }
 
+      async function usePatchCodeRuntimeSettings(){
+        let settings = await DWObject.Addon.BarcodeReader.getRuntimeSettings();
+        settings.barcodeFormatIds = Dynamsoft.DBR.EnumBarcodeFormat.BF_PATCHCODE;
+        await DWObject.Addon.BarcodeReader.updateRuntimeSettings(settings);
+      }
+
+      async function tagImagesWithBarcodeReader(){
+        for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
+          let tagList =  DWObject.GetTagListByIndex(i);
+          let processed = false;
+          for (let j = 0; j < tagList.length; j++) {
+            const tag = tagList[j];
+            if (tag === "NoPatchCode" || tag === "HasPatchCode") {
+              processed = true;
+            }
+          }
+          if (processed === false) {
+            let results = await DWObject.Addon.BarcodeReader.decode(i);
+            if (results.length > 0) {
+              DWObject.TagImages([i], "HasPatchCode");
+            }else{
+              DWObject.TagImages([i], "NoPatchCode");
+            }
+          }
+        }
       }
 
       function selectOutputPath(){
-        DWObject.RegisterEvent("OnGetFilePath",
-          function (isSave, filesCount, index, directory, fileName) {
-            console.log(directory);
-            console.log(fileName);
-            let path = getFullPath(directory,fileName);
-            document.getElementById("outputPath").value = path;
-          }
-        );
-        DWObject.ShowFileDialog(
-          true,
-          "",
-          0,
-          "",
-          "",
-          false,
-          false,
-          0
-        );
+        if (DWObject) {
+          DWObject.RegisterEvent("OnGetFilePath",
+            function (isSave, filesCount, index, directory, fileName) {
+              console.log(directory);
+              console.log(fileName);
+              let path = getFullPath(directory,fileName);
+              document.getElementById("outputPath").value = path;
+            }
+          );
+          DWObject.ShowFileDialog(
+            true,
+            "",
+            0,
+            "",
+            "",
+            false,
+            false,
+            0
+          );
+        }
       }
 
       function getFullPath(directory,fileName){
