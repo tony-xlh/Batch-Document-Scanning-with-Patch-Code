@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patch Code Batch Scanning Sample</title>
+    <script src="https://unpkg.com/dwt@18.0.0/dist/dynamsoft.webtwain.min.js"></script>
+    <style>
+      #dwtcontrolContainer {
+        width: 270px;
+        height: 360px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <h2 class="title">Batch Document Scanning with Patch Code</h2>
+      <div id="status"></div>
+      <div id="dwtcontrolContainer"></div>
+    </div>
+    <script>
+      window.onload = function(){
+        Dynamsoft.DWT.AutoLoad = false;
+        Dynamsoft.DWT.ResourcesPath = "https://unpkg.com/dwt@18.0.0/dist";
+        init();
+      }
+
+      function init(){
+        const status = document.getElementById("status");
+        Dynamsoft.DWT.Containers = [{ ContainerId: 'dwtcontrolContainer',Width: 270, Height: 350 }];
+        Dynamsoft.DWT.RegisterEvent('OnWebTwainReady', function () {
+          console.log("ready");
+          status.innerText = "";
+          DWObject = Dynamsoft.DWT.GetWebTwain('dwtcontrolContainer');
+          DWObject.Viewer.width = "100%";
+          DWObject.Viewer.height = "100%";
+          DWObject.SetViewMode(2,2);
+        });
+        status.innerText = "Loading...";
+        Dynamsoft.DWT.Load();
+      }
+    </script>
+  </body>
+</html>
