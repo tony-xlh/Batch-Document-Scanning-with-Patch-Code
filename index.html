@@ -38,10 +38,10 @@
             <input type="checkbox" id="removePageAfterPatchCodePage"/>
           </label>
           <br/>
-          <label for="outputFolder">
-            Output folder:
-            <input type="text" id="outputFolder"/>
-          </label><button onclick="selectOutputFolder();">Select</button>
+          <label for="outputPath">
+            Output path (you need to input a base filename):
+            <input type="text" id="outputPath"/>
+          </label><button onclick="selectOutputPath();">Select</button>
         </div>
       </div>
       <div id="dwtcontrolContainer"></div>
@@ -99,8 +99,33 @@
 
       }
 
-      function selectOutputFolder(){
+      function selectOutputPath(){
+        DWObject.RegisterEvent("OnGetFilePath",
+          function (isSave, filesCount, index, directory, fileName) {
+            console.log(directory);
+            console.log(fileName);
+            let path = getFullPath(directory,fileName);
+            document.getElementById("outputPath").value = path;
+          }
+        );
+        DWObject.ShowFileDialog(
+          true,
+          "",
+          0,
+          "",
+          "",
+          false,
+          false,
+          0
+        );
+      }
 
+      function getFullPath(directory,fileName){
+        if (Dynamsoft.Lib.env.bMac) {
+          return directory + "/" + fileName;
+        }else{
+          return directory + "\\" + fileName;
+        }
       }
     </script>
   </body>
