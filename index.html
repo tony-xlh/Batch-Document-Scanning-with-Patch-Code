@@ -12,9 +12,11 @@
     <div class="app">
       <h2 class="title">Batch Document Scanning with Patch Code</h2>
       <div id="status"></div>
+      <button onclick="scan();">Scan</button>
       <div id="dwtcontrolContainer"></div>
     </div>
     <script>
+      let DWObject;
       window.onload = function(){
         Dynamsoft.DWT.AutoLoad = false;
         Dynamsoft.DWT.ResourcesPath = "https://unpkg.com/dwt@18.0.0/dist";
@@ -32,6 +34,19 @@
         });
         status.innerText = "Loading...";
         Dynamsoft.DWT.Load();
+      }
+
+      function scan(){
+        if (DWObject) {
+          DWObject.SelectSource(function () {
+            DWObject.OpenSource();
+            DWObject.AcquireImage();
+          },
+            function () {
+              console.log("SelectSource failed!");
+            }
+          );
+        }
       }
     </script>
   </body>
