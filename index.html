@@ -6,10 +6,6 @@
     <title>Patch Code Batch Scanning Sample</title>
     <script src="https://unpkg.com/dwt@18.0.0/dist/dynamsoft.webtwain.min.js"></script>
     <style>
-      #dwtcontrolContainer {
-        width: 270px;
-        height: 360px;
-      }
     </style>
   </head>
   <body>
@@ -32,8 +28,6 @@
           console.log("ready");
           status.innerText = "";
           DWObject = Dynamsoft.DWT.GetWebTwain('dwtcontrolContainer');
-          DWObject.Viewer.width = "100%";
-          DWObject.Viewer.height = "100%";
           DWObject.SetViewMode(2,2);
         });
         status.innerText = "Loading...";
