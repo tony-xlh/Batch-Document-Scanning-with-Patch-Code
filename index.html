@@ -105,8 +105,6 @@
 
         }
         await tagImagesWithBarcodeReader();
-        let outputFolder;
-        let baseName;
         let documents = [];
         let imageIndex = [];
         for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
@@ -136,9 +134,25 @@
             imageIndex = [];
           }
         }
-        console.log(documents);
-        //SaveSelectedImagesAsMultiPagePDF()
-        
+        const path = document.getElementById("outputPath").value;
+        let outputFolder = getFolder(path);
+        let baseName = getBaseName(path);
+        if (path) {
+          DWObject.IfShowFileDialog = false;
+        }
+        for (let index = 0; index < documents.length; index++) {
+          const document = documents[index];
+          DWObject.SelectImages(document);
+          function OnSuccess() {
+            alert('Saved');
+          }
+          function OnFailure(errorCode, errorString) {
+            alert(errorString);
+          }
+          let fileName = baseName + "-" + (index+1).toString().padStart(3,'0');
+          let outputPath = getFullPath(outputFolder,fileName);
+          DWObject.SaveSelectedImagesAsMultiPagePDF(outputPath,OnSuccess,OnFailure);
+        }
       }
 
       async function usePatchCodeRuntimeSettings(){
@@ -192,10 +206,37 @@
       }
 
       function getFullPath(directory,fileName){
-        if (Dynamsoft.Lib.env.bMac) {
-          return directory + "/" + fileName;
-        }else{
+        if (Dynamsoft.Lib.env.bWin) {
           return directory + "\\" + fileName;
+        }else{
+          return directory + "/" + fileName;
+        }
+      }
+
+      function getFolder(path){
+        if (Dynamsoft.Lib.env.bWin) {
+          return path.substring(0,path.lastIndexOf("\\"));
+        }else{
+          return path.substring(0,path.lastIndexOf("/"));
+        }
+      }
+
+      function getBaseName(path){
+        let filename;
+        if (Dynamsoft.Lib.env.bWin) {
+          filename = path.substring(path.lastIndexOf("\\")+1,path.length);
+        }else{
+          filename = path.substring(path.lastIndexOf("/")+1,path.length);
+        }
+        return extensionRemoved(filename);
+      }
+
+      function extensionRemoved(filename){
+        let lastIndex = filename.lastIndexOf(".");
+        if (lastIndex != -1) {
+          return filename.substring(0,lastIndex); 
+        }else{
+          return filename;
         }
       }
     </script>
