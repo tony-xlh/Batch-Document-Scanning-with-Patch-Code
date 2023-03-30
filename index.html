@@ -103,52 +103,51 @@
 
       async function save(){
         if (DWObject) {
-
-        }
-        await tagImagesWithBarcodeReader();
-        let documents = [];
-        let imageIndex = [];
-        for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
-          let separationPage = false;
-          if (document.getElementById("enableSeparation").checked) {
-            let tagList =  DWObject.GetTagListByIndex(i); 
-            for (let j = 0; j < tagList.length; j++) {
-              const tag = tagList[j];
-              if (tag === "HasPatchCode") {
-                separationPage = true;
-              }
-            }
-          }
-          imageIndex.push(i);
-          if (separationPage || i === DWObject.HowManyImagesInBuffer - 1) {
-            if (separationPage) {
-              if (document.getElementById("removePatchCodePage").checked) {
-                imageIndex.pop();
-              }
-              if (document.getElementById("removePageAfterPatchCodePage").checked) {
-                if (i < DWObject.HowManyImagesInBuffer) {
-                  i++
+          await tagImagesWithBarcodeReader();
+          let documents = [];
+          let imageIndex = [];
+          for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
+            let separationPage = false;
+            if (document.getElementById("enableSeparation").checked) {
+              let tagList =  DWObject.GetTagListByIndex(i); 
+              for (let j = 0; j < tagList.length; j++) {
+                const tag = tagList[j];
+                if (tag === "HasPatchCode") {
+                  separationPage = true;
                 }
               }
             }
-            documents.push(imageIndex);
-            imageIndex = [];
+            imageIndex.push(i);
+            if (separationPage || i === DWObject.HowManyImagesInBuffer - 1) {
+              if (separationPage) {
+                if (document.getElementById("removePatchCodePage").checked) {
+                  imageIndex.pop();
+                }
+                if (document.getElementById("removePageAfterPatchCodePage").checked) {
+                  if (i < DWObject.HowManyImagesInBuffer) {
+                    i++
+                  }
+                }
+              }
+              documents.push(imageIndex);
+              imageIndex = [];
+            }
           }
+          const path = document.getElementById("outputPath").value;
+          let outputFolder = getFolder(path);
+          let baseName = getBaseName(path);
+          if (path) {
+            DWObject.IfShowFileDialog = false;
+          }
+          for (let index = 0; index < documents.length; index++) {
+            const document = documents[index];
+            DWObject.SelectImages(document);
+            let fileName = baseName + "-" + (index+1).toString().padStart(3,'0') + ".pdf";
+            let outputPath = getFullPath(outputFolder,fileName);
+            await saveAsMultiPagePDF(outputPath);
+          }
+          alert("Saved");
         }
-        const path = document.getElementById("outputPath").value;
-        let outputFolder = getFolder(path);
-        let baseName = getBaseName(path);
-        if (path) {
-          DWObject.IfShowFileDialog = false;
-        }
-        for (let index = 0; index < documents.length; index++) {
-          const document = documents[index];
-          DWObject.SelectImages(document);
-          let fileName = baseName + "-" + (index+1).toString().padStart(3,'0') + ".pdf";
-          let outputPath = getFullPath(outputFolder,fileName);
-          await saveAsMultiPagePDF(outputPath);
-        }
-        alert("Saved");
       }
 
       function saveAsMultiPagePDF(outputPath){
