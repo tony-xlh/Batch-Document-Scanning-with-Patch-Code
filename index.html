@@ -143,16 +143,23 @@
         for (let index = 0; index < documents.length; index++) {
           const document = documents[index];
           DWObject.SelectImages(document);
+          let fileName = baseName + "-" + (index+1).toString().padStart(3,'0') + ".pdf";
+          let outputPath = getFullPath(outputFolder,fileName);
+          await saveAsMultiPagePDF(outputPath);
+        }
+        alert("Saved");
+      }
+
+      function saveAsMultiPagePDF(outputPath){
+        return new Promise(function (resolve, reject) {
           function OnSuccess() {
-            alert('Saved');
+            resolve(true);
           }
           function OnFailure(errorCode, errorString) {
-            alert(errorString);
+            reject(errorString);
           }
-          let fileName = baseName + "-" + (index+1).toString().padStart(3,'0');
-          let outputPath = getFullPath(outputFolder,fileName);
           DWObject.SaveSelectedImagesAsMultiPagePDF(outputPath,OnSuccess,OnFailure);
-        }
+        });
       }
 
       async function usePatchCodeRuntimeSettings(){
