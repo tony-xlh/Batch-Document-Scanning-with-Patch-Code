@@ -6,52 +6,65 @@
     <title>Patch Code Batch Scanning Sample</title>
     <script src="https://unpkg.com/dwt@18.0.0/dist/dynamsoft.webtwain.min.js"></script>
     <style>
-      #options {
+      .controls {
         border: 1px solid black;
         border-radius: 5px;
-        width: 350px;
+        width: 360px;
+        height: 460px;
         padding: 10px;
+      }
+
+      .app {
+        display: flex;
+      }
+
+      #dwtcontrolContainer {
+        padding-right: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="app">
+    <div>
       <h2 class="title">Batch Document Scanning with Patch Code</h2>
-      <button onclick="scan();">Scan</button>
-      <button onclick="loadFile();">Load File</button>
-      <button onclick="save();">Save</button>
-      <button onclick="removeSelected();">Remove Selected</button>
-      <span id="status"></span>
-      <div>
-        <div id="options">
-          <div>Options:</div>
+      <div class="app">
+        <div id="dwtcontrolContainer"></div>
+        <div class="controls">
+          <button onclick="scan();">Scan</button>
+          <button onclick="loadFile();">Load File</button>
+          <button onclick="save();">Save</button>
+          <button onclick="removeSelected();">Remove Selected</button>
+          <span id="status"></span>
           <div>
-            <input type="checkbox" id="enableSeparation" checked/>
-            <label for="enableSeparation">
-              Enable document separation with Patch Code
-            </label>
-            <br/>
-            <input type="checkbox" id="removePatchCodePage" checked/>
-            <label for="removePatchCodePage">
-              Remove the Patch Code page
-            </label>
-            <br/>
-            <input type="checkbox" id="removePageAfterPatchCodePage" checked/>
-            <label for="removePageAfterPatchCodePage">
-              Remove the next page of the Patch Code page
-            </label>
-            <br/>
-            <label for="outputPath">
-              Output path:
-              <input type="text" id="outputPath"/>
-            </label><button onclick="selectOutputPath();">Select</button>
-            <div>
-              PS: You need to input a base filename like scanned.pdf and the documents will be save as scanned-001.pdf, scanned-002.pdf...
+            <div id="options">
+              <div>Options:</div>
+              <div>
+                <input type="checkbox" id="enableSeparation" checked/>
+                <label for="enableSeparation">
+                  Enable document separation with Patch Code
+                </label>
+                <br/>
+                <input type="checkbox" id="removePatchCodePage" checked/>
+                <label for="removePatchCodePage">
+                  Remove the Patch Code page
+                </label>
+                <br/>
+                <input type="checkbox" id="removePageAfterPatchCodePage" checked/>
+                <label for="removePageAfterPatchCodePage">
+                  Remove the next page of the Patch Code page
+                </label>
+                <br/>
+                <label for="outputPath">
+                  Output path:
+                  <input type="text" id="outputPath"/>
+                </label><button onclick="selectOutputPath();">Select</button>
+                <div>
+                  PS: You need to input a base filename like scanned.pdf and the documents will be save as scanned-001.pdf, scanned-002.pdf...
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div id="dwtcontrolContainer"></div>
     </div>
     <script>
       let DWObject;
