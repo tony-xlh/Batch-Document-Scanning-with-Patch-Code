@@ -25,26 +25,29 @@
       <div>
         <div id="options">
           <div>Options:</div>
-          <label for="enableSeparation">
-            Enable document separation with Patch Code
-            <input type="checkbox" id="enableSeparation" checked/>
-          </label>
-          <label for="removePatchCodePage">
-            Remove the Patch Code page
-            <input type="checkbox" id="removePatchCodePage" checked/>
-          </label>
-          <br/>
-          <label for="removePageAfterPatchCodePage">
-            Remove the next page of the Patch Code page
-            <input type="checkbox" id="removePageAfterPatchCodePage" checked/>
-          </label>
-          <br/>
-          <label for="outputPath">
-            Output path:
-            <input type="text" id="outputPath"/>
-          </label><button onclick="selectOutputPath();">Select</button>
           <div>
-            PS: You need to input a base filename like scanned.pdf and the documents will be save as scanned-001.pdf, scanned-002.pdf...
+            <input type="checkbox" id="enableSeparation" checked/>
+            <label for="enableSeparation">
+              Enable document separation with Patch Code
+            </label>
+            <br/>
+            <input type="checkbox" id="removePatchCodePage" checked/>
+            <label for="removePatchCodePage">
+              Remove the Patch Code page
+            </label>
+            <br/>
+            <input type="checkbox" id="removePageAfterPatchCodePage" checked/>
+            <label for="removePageAfterPatchCodePage">
+              Remove the next page of the Patch Code page
+            </label>
+            <br/>
+            <label for="outputPath">
+              Output path:
+              <input type="text" id="outputPath"/>
+            </label><button onclick="selectOutputPath();">Select</button>
+            <div>
+              PS: You need to input a base filename like scanned.pdf and the documents will be save as scanned-001.pdf, scanned-002.pdf...
+            </div>
           </div>
         </div>
       </div>
