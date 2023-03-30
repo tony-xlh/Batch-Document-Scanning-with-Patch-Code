@@ -20,6 +20,7 @@
       <button onclick="scan();">Scan</button>
       <button onclick="loadFile();">Load File</button>
       <button onclick="save();">Save</button>
+      <button onclick="removeSelected();">Remove Selected</button>
       <span id="status"></span>
       <div>
         <div id="options">
@@ -244,6 +245,12 @@
           return filename.substring(0,lastIndex); 
         }else{
           return filename;
+        }
+      }
+
+      function removeSelected(){
+        if (DWObject) {
+          DWObject.RemoveAllSelectedImages();
         }
       }
     </script>
