@@ -38,6 +38,11 @@
             <div id="options">
               <div>Options:</div>
               <div>
+                <input type="checkbox" id="enableBarcodeReader" checked/>
+                <label for="enableBarcodeReader">
+                  Use Dynamsoft Barcode Reader to read Patch Codes
+                </label>
+                <br/>
                 <input type="checkbox" id="enableSeparation" checked/>
                 <label for="enableSeparation">
                   Enable document separation with Patch Code
@@ -84,7 +89,17 @@
           usePatchCodeRuntimeSettings();
           DWObject.RegisterEvent("OnPostTransferAsync", function (outputInfo) {
             console.log(outputInfo);
-            console.log(JSON.stringify(outputInfo,"",4));
+            //console.log(JSON.stringify(outputInfo,"",4));
+            const extendedImageInfo = outputInfo["extendedImageInfo"];
+            if (extendedImageInfo["others"]) {
+              const others = extendedImageInfo["others"];
+              if (others["TWEI_PATCHCODE"]){
+                const PatchCodeInfo = others["TWEI_PATCHCODE"];
+                if (!isNaN(PatchCodeInfo)) {
+                  DWObject.TagImages([DWObject.HowManyImagesInBuffer - 1], "HasPatchCode");
+                }
+              }
+            }
           });
           status.innerText = "";
         });
@@ -131,7 +146,9 @@
 
       async function save(){
         if (DWObject) {
-          await tagImagesWithBarcodeReader();
+          if (document.getElementById("enableBarcodeReader").checked) {
+            await tagImagesWithBarcodeReader();
+          }
           let documents = [];
           let imageIndex = [];
           for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
