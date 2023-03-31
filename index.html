@@ -98,8 +98,12 @@
           const onSelected = function(){
             (async () => {
               DWObject.OpenSource();
-              await setBarcodeReadingCapability();
-              DWObject.AcquireImage({IfGetImageInfo: true,IfGetExtImageInfo:true});
+              DWObject.AcquireImage({
+                IfCloseSourceAfterAcquire: true,
+                IfGetImageInfo: true,
+                IfGetExtImageInfo:true,
+                extendedImageInfoQueryLevel:Dynamsoft.DWT.EnumDWT_ExtImageInfo.supported
+              });
             })();
           }
           const failure = function(){
@@ -107,28 +111,6 @@
           }
           DWObject.SelectSource(onSelected,failure);
         }
-      }
-
-      function setBarcodeReadingCapability(){
-        return new Promise(function (resolve, reject) {
-          DWObject.setCapabilities(
-            {
-              exception: "ignore",
-              capabilities: [
-                {
-                  capability: Dynamsoft.DWT.EnumDWT_Cap.ICAP_BARCODEDETECTIONENABLED,
-                  curValue: 0, // your own curValue
-                }
-              ],
-            },
-            function (successData) {
-              resolve(true);
-            },
-            function (errorData) {
-              reject(errorData);
-            }
-          );
-        });
       }
 
       function loadFile() {
